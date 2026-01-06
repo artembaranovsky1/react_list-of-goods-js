@@ -73,7 +73,7 @@ export const App = () => {
           Reverse
         </button>
 
-        {visibleGood !== goodsFromServer ? (
+        {JSON.stringify(visibleGood) !== JSON.stringify(goodsFromServer) ? (
           <button
             type="button"
             className="button is-danger is-light"
