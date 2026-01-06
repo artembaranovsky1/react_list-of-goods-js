@@ -29,6 +29,7 @@ export const App = () => {
   const sortByAlph = () => {
     setVisibleGood([...visibleGood].sort());
     setSortField('name');
+    setReversed(false);
   };
 
   const sortByLength = () => {
@@ -36,6 +37,7 @@ export const App = () => {
       [...visibleGood].sort((good1, good2) => good1.length - good2.length),
     );
     setSortField('length');
+    setReversed(false);
   };
 
   const reset = () => {
@@ -71,7 +73,7 @@ export const App = () => {
           Reverse
         </button>
 
-        {reversed || sortField ? (
+        {visibleGood !== goodsFromServer ? (
           <button
             type="button"
             className="button is-danger is-light"
