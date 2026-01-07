@@ -16,51 +16,67 @@ export const goodsFromServer = [
   'Garlic',
 ];
 
+const SORT_FIELD_NAME = 'name';
+const SORT_FIELD_LENGTH = 'length';
+
+function getPreparedGood(goods, { sortField }) {
+  const preparedGoods = [...goods]; // копіюємо початковий масив
+
+
+  if (sortField) {
+    preparedGoods.sort((good1, good2) => {
+      switch (sortField) {
+        case SORT_FIELD_NAME:
+          return good1.localeCompare(good2);
+
+        case SORT_FIELD_LENGTH:
+          return good1[sortField] - good2[sortField];
+
+        default:
+          return 0;
+      }
+    });
+  }
+
+  return preparedGoods;
+}
+
 export const App = () => {
-  const [visibleGood, setVisibleGood] = useState(goodsFromServer);
   const [sortField, setSortField] = useState('');
   const [reversed, setReversed] = useState(false);
+  let visibleGood = getPreparedGood(goodsFromServer, { sortField, reversed });
 
-  const reverse = () => {
-    setReversed(!reversed);
-    setVisibleGood([...visibleGood].reverse());
-  };
+  if (reversed) {
+    visibleGood = visibleGood.toReversed();
+  }
 
-  const sortByAlph = () => {
-    setVisibleGood([...visibleGood].sort());
-    setSortField('name');
-    setReversed(false);
-  };
+  // const reverse = () => {
+  //   setReversed(!reversed);
+  //   setVisibleGood([...visibleGood].reverse());
+  // };
 
-  const sortByLength = () => {
-    setVisibleGood(
-      [...visibleGood].sort((good1, good2) => good1.length - good2.length),
-    );
-    setSortField('length');
-    setReversed(false);
-  };
-
-  const reset = () => {
-    setVisibleGood(goodsFromServer);
-    setSortField('');
-    setReversed(false);
-  };
+  // const sortByLength = () => {
+  //   setVisibleGood(
+  //     [...visibleGood].sort((good1, good2) => good1.length - good2.length),
+  //   );
+  //   setSortField(SORT_FIELD_LENGTH);
+  // };
 
   return (
     <div className="section content">
       <div className="buttons">
         <button
           type="button"
-          className={`button is-info ${sortField === 'name' ? '' : 'is-light'}`}
-          onClick={sortByAlph}
+          className={`button is-info ${sortField === SORT_FIELD_NAME ? '' : 'is-light'}`}
+          onClick={() => setSortField(SORT_FIELD_NAME)}
         >
           Sort alphabetically
         </button>
 
         <button
           type="button"
-          className={`button is-success ${sortField === 'length' ? '' : 'is-light'}`}
-          onClick={sortByLength}
+          className={`button is-success ${sortField === SORT_FIELD_LENGTH ? '' : 'is-light'}`}
+          onClick={() => setSortField(SORT_FIELD_LENGTH)}
         >
           Sort by length
         </button>
@@ -68,7 +84,7 @@ export const App = () => {
         <button
           type="button"
           className={`button is-warning ${reversed ? '' : 'is-light'}`}
-          onClick={reverse}
+          onClick={() => setReversed(!reversed)}
         >
           Reverse
         </button>
@@ -77,7 +93,9 @@ export const App = () => {
           <button
             type="button"
             className="button is-danger is-light"
-            onClick={reset}
+            onClick={() => {
+              setSortField(''); setReversed(!reversed);
+            }}
           >
             Reset
           </button>
